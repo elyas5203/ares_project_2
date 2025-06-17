@@ -1,0 +1,272 @@
+/* File: DabestanSite/assets/css/admin_style.css */
+
+@import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css');
+
+body {
+    font-family: 'Vazirmatn', sans-serif;
+    background-color: #f8f9fa;
+    direction: rtl;
+    margin: 0;
+}
+
+.login-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-container {
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    width: 350px;
+    text-align: center;
+}
+
+.login-container h1 {
+    margin-top: 0;
+    margin-bottom: 24px;
+    color: #343a40;
+    font-size: 24px;
+}
+
+.login-container input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 16px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    box-sizing: border-box;
+    text-align: right;
+}
+
+.login-container button {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff; /* آبی اصلی و کلاسیک */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.login-container button:hover {
+    background-color: #0056b3; /* آبی تیره‌تر برای هاور */
+}
+
+.error-message {
+    color: #721c24;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+/* ======== Dashboard Layout Styles ======== */
+
+.admin-wrapper {
+    display: flex;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #343a40; /* خاکستری خیلی تیره */
+    color: #fff;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    right: 0;
+    padding-top: 20px;
+}
+
+.sidebar-header {
+    text-align: center;
+    padding: 20px 15px;
+    border-bottom: 1px solid #495057;
+}
+
+.sidebar-header h3 {
+    margin: 0;
+    font-size: 22px;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+}
+
+.sidebar-menu li a {
+    display: block;
+    color: #adb5bd; /* خاکستری روشن */
+    text-decoration: none;
+    padding: 15px 25px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.sidebar-menu li a:hover, .sidebar-menu li a.active {
+    background-color: #007bff; /* آبی اصلی */
+    color: #fff;
+}
+
+.main-content {
+    margin-right: 250px; /* به اندازه عرض سایدبار */
+    width: calc(100% - 250px);
+    padding: 20px;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+}
+
+.page-header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.logout-btn {
+    background-color: #6c757d;
+    color: #fff;
+    padding: 8px 15px;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.logout-btn:hover {
+    background-color: #5a6268;
+}
+
+.content-card {
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+/* ======== Form and Table Styles ======== */
+
+.form-container {
+    margin-bottom: 30px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #495057;
+}
+
+.form-group input[type="text"],
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+.submit-btn {
+    background-color: #28a745; /* سبز برای تایید */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+    background-color: #218838;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.data-table th, .data-table td {
+    border: 1px solid #dee2e6;
+    padding: 12px;
+    text-align: right;
+}
+
+.data-table thead {
+    background-color: #e9ecef;
+    color: #495057;
+}
+
+.data-table tbody tr:nth-child(odd) {
+    background-color: #f8f9fa;
+}
+
+.data-table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+.message {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
+.message.success {
+    color: #155724;
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+}
+.message.error {
+    color: #721c24;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+}
+/* File: DabestanSite/assets/css/admin_style.css (Replace or Add this) */
+
+/* --- Action Buttons in Tables --- */
+.action-btn {
+    font-size: 13px;
+    margin: 0 5px;
+    padding: 4px 8px;
+    text-decoration: none;
+    border-radius: 4px;
+    color: #fff;
+    transition: opacity 0.3s;
+}
+.action-btn:hover {
+    opacity: 0.8;
+}
+
+.action-btn.view {
+    background-color: #007bff; /* آبی */
+}
+.action-btn.edit {
+    background-color: #ffc107; /* زرد */
+    color: #212529;
+}
+.action-btn.delete {
+    background-color: #dc3545; /* قرمز */
+}
