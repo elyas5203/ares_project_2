@@ -1,0 +1,355 @@
+/* Reset پایه و فونت عمومی */
+body, html {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Tahoma', 'Helvetica Neue', Arial, sans-serif; /* فونت‌های پشتیبان */
+    direction: rtl; /* راست‌چین کردن کل صفحه */
+    background-color: #f4f8fb; /* یک رنگ پس‌زمینه ملایم */
+    color: #333; /* رنگ متن پیش‌فرض */
+    line-height: 1.6;
+}
+
+/* کلاس‌های عمومی برای پیام‌ها */
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+.alert-info {
+    color: #0c5460;
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+}
+
+.alert-warning {
+    color: #856404;
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+}
+
+/* استایل‌های پایه برای دکمه‌ها (می‌تواند گسترش یابد) */
+.btn {
+    display: inline-block;
+    font-weight: 400;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    user-select: none;
+    background-color: transparent;
+    border: 1px solid transparent;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: .25rem;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    color: #fff;
+    background-color: #0069d9;
+    border-color: #0062cc;
+}
+
+/* کانتینر اصلی برای محتوای صفحات داخلی */
+.main-content {
+    padding: 20px;
+    margin-left: 250px; /* به اندازه عرض سایدبار */
+    transition: margin-left 0.3s;
+}
+
+.main-content.no-sidebar {
+    margin-left: 0;
+}
+
+
+/* هدر */
+.header {
+    background-color: #343a40;
+    color: #fff;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0; /* برای هدر تمام عرض */
+    right: 0;
+    z-index: 1030; /* بالاتر از سایدبار */
+    height: 60px; /* ارتفاع ثابت برای هدر */
+}
+
+.header .logo-area {
+    display: flex;
+    align-items: center;
+}
+
+.header .menu-toggle {
+    color: #fff;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    margin-left: 15px; /* فاصله از لوگو/عنوان */
+}
+
+.header .site-title {
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.header .user-info {
+    display: flex;
+    align-items: center;
+}
+.header .user-info span {
+    margin-right: 10px;
+}
+
+.header .datetime-container {
+    font-size: 0.9rem;
+    margin-left: 20px; /* فاصله از اطلاعات کاربر */
+    text-align: left;
+}
+.header .datetime-container div {
+    line-height: 1.3;
+}
+
+
+/* سایدبار */
+.sidebar {
+    height: 100%;
+    width: 250px;
+    position: fixed;
+    z-index: 1000; /* پایین تر از هدر */
+    top: 60px; /* شروع از زیر هدر */
+    right: -250px; /* در ابتدا مخفی در سمت راست */
+    background-color: #495057; /* رنگ تیره‌تر برای سایدبار */
+    padding-top: 20px;
+    transition: right 0.3s;
+    overflow-y: auto; /* برای اسکرول در صورت زیاد بودن آیتم‌ها */
+}
+
+.sidebar.active {
+    right: 0; /* نمایش سایدبار */
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar ul li a {
+    padding: 10px 15px;
+    text-decoration: none;
+    font-size: 1.1rem;
+    color: #f8f9fa;
+    display: block;
+    transition: background-color 0.2s, padding-right 0.2s;
+}
+
+.sidebar ul li a:hover {
+    background-color: #5a6268;
+    padding-right: 20px; /* کمی جلو آمدن متن موقع هاور */
+}
+
+.sidebar ul li a .icon { /* برای آیکون‌های احتمالی کنار منو */
+    margin-left: 8px;
+}
+
+/* محتوای اصلی وقتی سایدبار باز است */
+.main-content-shifted {
+    /* این کلاس دیگر استفاده نمی‌شود چون سایدبار روی محتوا می‌آید */
+}
+
+
+/* استایل برای موبایل و تبلت */
+@media (max-width: 768px) {
+    .sidebar {
+        /* در موبایل سایدبار روی محتوا می‌آید */
+        /* عرض سایدبار را می‌توان برای موبایل کمتر کرد */
+         width: 220px;
+         right: -220px; /* مخفی */
+         top: 0; /* از بالای صفحه شروع شود */
+         height: 100vh;
+         z-index: 1040; /* بالاتر از هدر در حالت موبایل */
+    }
+    .sidebar.active {
+        right: 0;
+    }
+
+    .main-content {
+        margin-left: 0 !important; /* در موبایل سایدبار روی محتواست */
+        padding-top: 70px; /* فاصله از هدر ثابت */
+    }
+    .header .site-title {
+        font-size: 1.2rem;
+    }
+    .header .menu-toggle {
+        display: block; /* همیشه نمایش داده شود */
+    }
+    .header .datetime-container {
+        font-size: 0.8rem;
+        margin-left: 10px;
+    }
+}
+
+/* برای پوشاندن محتوا وقتی سایدبار باز است (اختیاری) */
+.overlay {
+    display: none;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.5);
+    z-index: 1035; /* بین سایدبار و هدر در حالت موبایل، یا پایین‌تر از سایدبار و بالاتر از محتوا */
+    top: 0;
+    left: 0;
+}
+.overlay.active {
+    display: block;
+}
+
+/* استایل‌های اولیه برای جدول‌ها */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+th, td {
+    padding: .75rem;
+    vertical-align: top;
+    border-top: 1px solid #dee2e6;
+    text-align: right;
+}
+
+thead th {
+    vertical-align: bottom;
+    border-bottom: 2px solid #dee2e6;
+    background-color: #e9ecef;
+    color: #495057;
+}
+
+tbody tr:nth-of-type(odd) {
+    /* background-color: rgba(0,0,0,.03); */
+}
+tbody tr:hover {
+    background-color: rgba(0,0,0,.06);
+}
+
+/* واکنش‌گرایی جدول‌ها */
+.table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+/* سایر استایل‌های عمومی می‌توانند اینجا اضافه شوند */
+.text-left { text-align: left !important; }
+.text-center { text-align: center !important; }
+
+/* فرم ها */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-control {
+    display: block;
+    width: 100%;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+.form-control:focus {
+    color: #495057;
+    background-color: #fff;
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 .2rem rgba(0,123,255,.25);
+}
+
+textarea.form-control {
+    min-height: calc(1.5em + .75rem + 2px); /* ارتفاع پیش‌فرض برای textarea */
+}
+
+select.form-control {
+    /* height: calc(1.5em + .75rem + 2px); */ /* برای هماهنگی ارتفاع با input */
+}
+
+.card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid rgba(0,0,0,.125);
+    border-radius: .25rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 0 15px rgba(0,0,0,0.05);
+}
+
+.card-header {
+    padding: .75rem 1.25rem;
+    margin-bottom: 0;
+    background-color: rgba(0,0,0,.03);
+    border-bottom: 1px solid rgba(0,0,0,.125);
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+.card-header:first-child {
+    border-radius: calc(.25rem - 1px) calc(.25rem - 1px) 0 0;
+}
+
+.card-body {
+    flex: 1 1 auto;
+    padding: 1.25rem;
+}
+
+.card-title {
+    margin-bottom: .75rem;
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+.card-footer {
+    padding: .75rem 1.25rem;
+    background-color: rgba(0,0,0,.03);
+    border-top: 1px solid rgba(0,0,0,.125);
+}
+.card-footer:last-child {
+    border-radius: 0 0 calc(.25rem - 1px) calc(.25rem - 1px);
+}
