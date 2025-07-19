@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 from dotenv import load_dotenv
 from app.core.ai import get_ai_response
-from app.core.db import get_chats, create_chat, get_messages, create_message, rename_chat, add_product, get_products
+from app.core.db import get_chats, create_chat, get_messages, create_message, rename_chat, add_product, get_products, add_competitor, get_competitors
 
 app = Flask(__name__)
 
@@ -15,9 +15,27 @@ def dashboard():
 def chat():
     return render_template('chat.html')
 
-@app.route('/competitors')
+from app.core.ai import analyze_competitor_website
+
+@app.route('/competitors', methods=['GET', 'POST'])
 def competitors():
-    return render_template('competitors.html')
+    if request.method == 'POST':
+        name = request.form['name']
+        url = request.form['url']
+        add_competitor(name, url)
+
+    competitors = get_competitors()
+    return render_template('competitors.html', competitors=competitors)
+
+from app.core.db import get_competitor
+
+@app.route('/competitors/<int:competitor_id>/analyze')
+def analyze_competitor_route(competitor_id):
+    competitor = get_competitor(competitor_id)
+    if competitor:
+        result = analyze_competitor_website(competitor['url'])
+        return render_template('analysis_result.html', competitor=competitor, result=result)
+    return "رقیب یافت نشد."
 
 @app.route('/products', methods=['GET', 'POST'])
 def products():
