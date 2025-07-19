@@ -10,23 +10,41 @@
             background-color: #f5f5f5;
             color: #333;
             margin: 0;
-            padding: 20px;
+            display: flex;
+            height: 100vh;
         }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
+        .sidebar {
+            width: 250px;
             background-color: #fff;
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-left: 1px solid #ddd;
         }
-        h1 {
-            color: #5a3e8d;
-            text-align: center;
-        }
-        form {
+        .chat-container {
+            flex-grow: 1;
             display: flex;
-            margin-top: 20px;
+            flex-direction: column;
+            padding: 20px;
+        }
+        .chat-history {
+            flex-grow: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+        .message {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .user-message {
+            background-color: #e0f7fa;
+            text-align: left;
+        }
+        .ai-message {
+            background-color: #f0ebf9;
+            text-align: right;
+        }
+        .chat-form {
+            display: flex;
         }
         input[type="text"] {
             flex-grow: 1;
@@ -45,43 +63,94 @@
             font-family: inherit;
             margin-right: 10px;
         }
-        #response {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #f0ebf9;
-            border-radius: 4px;
-        }
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v32.102/Vazirmatn-font-face.css">
 </head>
 <body>
-    <div class="container">
-        <h1>دستیار هوش مصنوعی</h1>
-        <form action="/chat" method="post">
+    <div class="sidebar">
+        <h2>چت‌های قبلی</h2>
+        <ul id="chat-list">
+            <!-- Chat list will be populated here -->
+        </ul>
+        <button id="new-chat">چت جدید</button>
+    </div>
+    <div class="chat-container">
+        <div class="chat-history">
+            <!-- Chat messages will be displayed here -->
+        </div>
+        <form class="chat-form">
             <input type="text" name="prompt" placeholder="پیام خود را وارد کنید...">
             <input type="submit" value="ارسال">
         </form>
-        <br>
-        <div>
-            <h2>پاسخ:</h2>
-            <p id="response"></p>
-        </div>
     </div>
 
     <script>
-        const form = document.querySelector('form');
-        const responseP = document.querySelector('#response');
+        const chatList = document.getElementById('chat-list');
+        const newChatButton = document.getElementById('new-chat');
+        const chatHistory = document.querySelector('.chat-history');
+        const chatForm = document.querySelector('.chat-form');
+        const promptInput = document.querySelector('input[name="prompt"]');
 
-        form.addEventListener('submit', async (e) => {
+        let currentChatId = null;
+
+        async function getChats() {
+            const response = await fetch('/chats');
+            const chats = await response.json();
+            chatList.innerHTML = '';
+            for (const chat of chats) {
+                const li = document.createElement('li');
+                li.textContent = chat.title;
+                li.dataset.chatId = chat.id;
+                li.addEventListener('click', () => {
+                    currentChatId = chat.id;
+                    getMessages(chat.id);
+                });
+                chatList.appendChild(li);
+            }
+        }
+
+        async function createNewChat() {
+            const response = await fetch('/chats', { method: 'POST' });
+            const chat = await response.json();
+            currentChatId = chat.id;
+            getChats();
+            getMessages(chat.id);
+        }
+
+        async function getMessages(chatId) {
+            const response = await fetch(`/chats/${chatId}/messages`);
+            const messages = await response.json();
+            chatHistory.innerHTML = '';
+            for (const message of messages) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message', message.role === 'user' ? 'user-message' : 'ai-message');
+                messageDiv.textContent = message.content;
+                chatHistory.appendChild(messageDiv);
+            }
+        }
+
+        async function sendMessage(e) {
             e.preventDefault();
-            const prompt = form.prompt.value;
-            const response = await fetch('/chat', {
+            const prompt = promptInput.value;
+            promptInput.value = '';
+
+            if (!currentChatId) {
+                await createNewChat();
+            }
+
+            const response = await fetch(`/chats/${currentChatId}/messages`, {
                 method: 'POST',
-                body: new URLSearchParams({prompt})
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt })
             });
-            const text = await response.text();
-            responseP.textContent = text;
-        });
+            const message = await response.json();
+            getMessages(currentChatId);
+        }
+
+        newChatButton.addEventListener('click', createNewChat);
+        chatForm.addEventListener('submit', sendMessage);
+
+        getChats();
     </script>
 </body>
 </html>
