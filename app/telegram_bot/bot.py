@@ -1,15 +1,19 @@
 import os
 import logging
 import asyncio
+from dotenv import load_dotenv
 from telegram import Update
-from telegram.ext import Application, CommandHandler, ContextTypes
-from app.core.db import add_competitor, add_knowledge
+from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
+from app.core.db import add_competitor, add_knowledge, create_chat, get_chat, create_message, get_messages
+from app.core.ai import get_ai_response
 
 # Enable logging
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
 )
 logger = logging.getLogger(__name__)
+
+load_dotenv()
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a message when the command /start is issued."""
@@ -34,14 +38,40 @@ async def add_knowledge_command(update: Update, context: ContextTypes.DEFAULT_TY
     add_knowledge(content)
     await update.message.reply_text("اطلاعات جدید با موفقیت به پایگاه دانش اضافه شد.")
 
+async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle text messages."""
+    telegram_chat_id = update.message.chat_id
+    user_message = update.message.text
+
+    # Check if a chat session exists for this user, if not create one
+    chat = get_chat(telegram_chat_id=telegram_chat_id)
+    if not chat:
+        chat = create_chat(f"Telegram Chat with {update.message.from_user.first_name}")
+        conn = get_db_connection()
+        conn.execute('UPDATE chats SET telegram_chat_id = ? WHERE id = ?', (telegram_chat_id, chat['id']))
+        conn.commit()
+        conn.close()
+        chat = get_chat(chat_id=chat['id'])
+
+    create_message(chat['id'], 'user', user_message)
+
+    messages = get_messages(chat['id'])
+    history = "\n".join([f"{m['role']}: {m['content']}" for m in messages])
+
+    response = get_ai_response(history)
+    create_message(chat['id'], 'ai', response)
+
+    await update.message.reply_text(response)
+
 def main() -> None:
     """Start the bot."""
-    application = Application.builder().token(os.environ["TELEGRAM_BOT_TOKEN"]).build()
+    application = Application.builder().token(os.environ["TELEGRAM_BOT_TOKEN"]).job_queue(None).build()
 
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("post", post))
     application.add_handler(CommandHandler("add_competitor", add_competitor_command))
     application.add_handler(CommandHandler("add_knowledge", add_knowledge_command))
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
     application.run_polling()
 

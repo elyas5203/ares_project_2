@@ -8,9 +8,10 @@ def get_db_connection():
 def init_db():
     conn = get_db_connection()
     conn.execute('CREATE TABLE IF NOT EXISTS competitors (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, url TEXT NOT NULL)')
-    conn.execute('CREATE TABLE IF NOT EXISTS chats (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL)')
+    conn.execute('CREATE TABLE IF NOT EXISTS chats (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, telegram_chat_id INTEGER)')
     conn.execute('CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, chat_id INTEGER NOT NULL, role TEXT NOT NULL, content TEXT NOT NULL, FOREIGN KEY (chat_id) REFERENCES chats (id))')
     conn.execute('CREATE TABLE IF NOT EXISTS knowledge_base (id INTEGER PRIMARY KEY AUTOINCREMENT, content TEXT NOT NULL)')
+    conn.execute('CREATE TABLE IF NOT EXISTS products (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, price REAL NOT NULL, description TEXT, image TEXT)')
     conn.close()
 
 def add_competitor(name, url):
@@ -33,9 +34,14 @@ def create_chat(title):
     conn.close()
     return get_chat(chat_id)
 
-def get_chat(chat_id):
+def get_chat(chat_id=None, telegram_chat_id=None):
     conn = get_db_connection()
-    chat = conn.execute('SELECT * FROM chats WHERE id = ?', (chat_id,)).fetchone()
+    if chat_id:
+        chat = conn.execute('SELECT * FROM chats WHERE id = ?', (chat_id,)).fetchone()
+    elif telegram_chat_id:
+        chat = conn.execute('SELECT * FROM chats WHERE telegram_chat_id = ?', (telegram_chat_id,)).fetchone()
+    else:
+        chat = None
     conn.close()
     return chat
 
@@ -68,3 +74,15 @@ def rename_chat(chat_id, title):
     conn.execute('UPDATE chats SET title = ? WHERE id = ?', (title, chat_id))
     conn.commit()
     conn.close()
+
+def add_product(name, price, description, image):
+    conn = get_db_connection()
+    conn.execute('INSERT INTO products (name, price, description, image) VALUES (?, ?, ?, ?)', (name, price, description, image))
+    conn.commit()
+    conn.close()
+
+def get_products():
+    conn = get_db_connection()
+    products = conn.execute('SELECT * FROM products').fetchall()
+    conn.close()
+    return products

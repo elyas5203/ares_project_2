@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+
+{% block title %}چت با آرس{% endblock %}
+
+{% block content %}
+<div class="flex h-full">
+    <div class="w-64 bg-white shadow-md">
+        <div class="p-4">
+            <h2 class="text-lg font-semibold text-gray-700">چت‌های قبلی</h2>
+            <ul id="chat-list" class="mt-4">
+                <!-- Chat list will be populated here -->
+            </ul>
+            <button id="new-chat" class="w-full mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                چت جدید
+            </button>
+        </div>
+    </div>
+    <div class="flex-1 flex flex-col">
+        <div id="chat-history" class="flex-1 p-4 overflow-y-auto">
+            <!-- Chat messages will be displayed here -->
+        </div>
+        <div class="p-4 bg-white border-t">
+            <form id="chat-form" class="flex items-center">
+                <textarea id="prompt-input" class="flex-1 border rounded-lg py-2 px-4" placeholder="پیام خود را وارد کنید..." rows="1"></textarea>
+                <input type="file" id="file-input" class="hidden">
+                <button type="button" id="attach-file-button" class="ml-4 text-gray-500 hover:text-gray-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                    </svg>
+                </button>
+                <button type="submit" class="ml-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full">
+                    ارسال
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const chatList = document.getElementById('chat-list');
+        const newChatButton = document.getElementById('new-chat');
+        const chatHistory = document.getElementById('chat-history');
+        const chatForm = document.getElementById('chat-form');
+        const promptInput = document.getElementById('prompt-input');
+        const fileInput = document.getElementById('file-input');
+        const attachFileButton = document.getElementById('attach-file-button');
+
+        let currentChatId = null;
+
+        async function getChats() {
+            const response = await fetch('/chats');
+            const chats = await response.json();
+            chatList.innerHTML = '';
+            for (const chat of chats) {
+                const li = document.createElement('li');
+                li.classList.add('flex', 'justify-between', 'items-center', 'p-2', 'hover:bg-gray-200', 'cursor-pointer');
+                li.textContent = chat.title;
+                li.dataset.chatId = chat.id;
+
+                const renameButton = document.createElement('button');
+                renameButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>';
+                renameButton.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    const newTitle = prompt('نام جدید چت را وارد کنید:', chat.title);
+                    if (newTitle) {
+                        await fetch(`/chats/${chat.id}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ title: newTitle })
+                        });
+                        getChats();
+                    }
+                });
+
+                li.appendChild(renameButton);
+                li.addEventListener('click', () => {
+                    currentChatId = chat.id;
+                    getMessages(chat.id);
+                });
+                chatList.appendChild(li);
+            }
+        }
+
+        async function createNewChat() {
+            const response = await fetch('/chats', { method: 'POST' });
+            const chat = await response.json();
+            currentChatId = chat.id;
+            getChats();
+            getMessages(chat.id);
+        }
+
+        async function getMessages(chatId) {
+            const response = await fetch(`/chats/${chatId}/messages`);
+            const messages = await response.json();
+            chatHistory.innerHTML = '';
+            for (const message of messages) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('mb-4');
+                const roleDiv = document.createElement('div');
+                roleDiv.classList.add('font-bold', message.role === 'user' ? 'text-blue-500' : 'text-green-500');
+                roleDiv.textContent = message.role === 'user' ? 'شما' : 'آرس';
+                const contentDiv = document.createElement('div');
+                contentDiv.textContent = message.content;
+                messageDiv.appendChild(roleDiv);
+                messageDiv.appendChild(contentDiv);
+                chatHistory.appendChild(messageDiv);
+            }
+        }
+
+        async function sendMessage() {
+            const prompt = promptInput.value;
+            const file = fileInput.files[0];
+            promptInput.value = '';
+            fileInput.value = '';
+            promptInput.style.height = 'auto';
+
+            if (!currentChatId) {
+                await createNewChat();
+            }
+
+            const userMessageDiv = document.createElement('div');
+            userMessageDiv.classList.add('mb-4');
+            const userRoleDiv = document.createElement('div');
+            userRoleDiv.classList.add('font-bold', 'text-blue-500');
+            userRoleDiv.textContent = 'شما';
+            const userContentDiv = document.createElement('div');
+            userContentDiv.textContent = prompt;
+            userMessageDiv.appendChild(userRoleDiv);
+            userMessageDiv.appendChild(userContentDiv);
+            chatHistory.appendChild(userMessageDiv);
+
+            const thinkingDiv = document.createElement('div');
+            thinkingDiv.classList.add('mb-4');
+            const roleDiv = document.createElement('div');
+            roleDiv.classList.add('font-bold', 'text-green-500');
+            roleDiv.textContent = 'آرس';
+            const contentDiv = document.createElement('div');
+            contentDiv.textContent = 'در حال فکر کردن...';
+            thinkingDiv.appendChild(roleDiv);
+            thinkingDiv.appendChild(contentDiv);
+            chatHistory.appendChild(thinkingDiv);
+
+            const formData = new FormData();
+            formData.append('prompt', prompt);
+            if (file) {
+                formData.append('file', file);
+            }
+
+            const response = await fetch(`/chats/${currentChatId}/messages`, {
+                method: 'POST',
+                body: formData
+            });
+            const message = await response.json();
+            getMessages(currentChatId);
+        }
+
+        promptInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                sendMessage();
+            }
+        });
+
+        promptInput.addEventListener('input', () => {
+            promptInput.style.height = 'auto';
+            promptInput.style.height = (promptInput.scrollHeight) + 'px';
+        });
+
+        attachFileButton.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        newChatButton.addEventListener('click', createNewChat);
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            sendMessage();
+        });
+
+        getChats();
+    </script>
+</body>
+</html>
