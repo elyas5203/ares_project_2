@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %} - دستیار هوش مصنوعی</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v32.102/Vazirmatn-font-face.css">
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="flex h-screen">
+        <div class="w-64 bg-white shadow-md">
+            <div class="p-4">
+                <h1 class="text-2xl font-bold text-blue-500">آرس</h1>
+                <nav class="mt-8">
+                    <a href="{{ url_for('dashboard') }}" class="block py-2 px-4 text-gray-700 hover:bg-gray-200 rounded">داشبورد</a>
+                    <a href="{{ url_for('chat') }}" class="block py-2 px-4 text-gray-700 hover:bg-gray-200 rounded">چت با آرس</a>
+                    <a href="{{ url_for('competitors') }}" class="block py-2 px-4 text-gray-700 hover:bg-gray-200 rounded">تحلیل رقبا</a>
+                    <a href="{{ url_for('products') }}" class="block py-2 px-4 text-gray-700 hover:bg-gray-200 rounded">مدیریت محصولات</a>
+                </nav>
+            </div>
+        </div>
+        <div class="flex-1 flex flex-col">
+            <main class="flex-1 p-4 overflow-y-auto">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+</body>
+</html>

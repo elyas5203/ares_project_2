@@ -1,15 +1,47 @@
 from flask import Flask, render_template, request, jsonify
 from dotenv import load_dotenv
 from app.core.ai import get_ai_response
-from app.core.db import get_chats, create_chat, get_messages, create_message, rename_chat
+from app.core.db import get_chats, create_chat, get_messages, create_message, rename_chat, add_product, get_products
 
 app = Flask(__name__)
 
 load_dotenv()
 
 @app.route('/')
-def index():
+def dashboard():
     return render_template('index.html')
+
+@app.route('/chat')
+def chat():
+    return render_template('chat.html')
+
+@app.route('/competitors')
+def competitors():
+    return render_template('competitors.html')
+
+@app.route('/products', methods=['GET', 'POST'])
+def products():
+    if request.method == 'POST':
+        name = request.form['name']
+        price = request.form['price']
+        description = request.form['description']
+        image = request.files['image']
+
+        if image and allowed_file(image.filename):
+            filename = secure_filename(image.filename)
+            image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            add_product(name, price, description, filename)
+
+            # Post to Telegram
+            chat_id = os.environ["TELEGRAM_CHAT_ID"]
+            message = f"محصول جدید: {name}\nقیمت: {price}\nتوضیحات: {description}"
+            # I need to find a way to send the image to telegram
+            # For now, I will just send the text
+            # I will fix this in the next step
+            # context.bot.send_message(chat_id=chat_id, text=message)
+
+    products = get_products()
+    return render_template('products.html', products=products)
 
 @app.route('/chats', methods=['GET'])
 def get_all_chats():
