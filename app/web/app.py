@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 from app.core.ai import get_ai_response
-from app.core.db import get_chats, create_chat, get_messages, create_message
+from app.core.db import get_chats, create_chat, get_messages, create_message, rename_chat
 
 app = Flask(__name__)
 
@@ -38,6 +38,12 @@ def add_message(chat_id):
     # Return the new message
     new_message = get_messages(chat_id)[-1]
     return jsonify(dict(new_message))
+
+@app.route('/chats/<int:chat_id>', methods=['PUT'])
+def rename_chat_endpoint(chat_id):
+    title = request.json['title']
+    rename_chat(chat_id, title)
+    return jsonify({'success': True})
 
 if __name__ == '__main__':
     app.run(debug=True)

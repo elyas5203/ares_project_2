@@ -10,6 +10,7 @@ def init_db():
     conn.execute('CREATE TABLE IF NOT EXISTS competitors (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, url TEXT NOT NULL)')
     conn.execute('CREATE TABLE IF NOT EXISTS chats (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL)')
     conn.execute('CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, chat_id INTEGER NOT NULL, role TEXT NOT NULL, content TEXT NOT NULL, FOREIGN KEY (chat_id) REFERENCES chats (id))')
+    conn.execute('CREATE TABLE IF NOT EXISTS knowledge_base (id INTEGER PRIMARY KEY AUTOINCREMENT, content TEXT NOT NULL)')
     conn.close()
 
 def add_competitor(name, url):
@@ -47,5 +48,23 @@ def get_messages(chat_id):
 def create_message(chat_id, role, content):
     conn = get_db_connection()
     conn.execute('INSERT INTO messages (chat_id, role, content) VALUES (?, ?, ?)', (chat_id, role, content))
+    conn.commit()
+    conn.close()
+
+def add_knowledge(content):
+    conn = get_db_connection()
+    conn.execute('INSERT INTO knowledge_base (content) VALUES (?)', (content,))
+    conn.commit()
+    conn.close()
+
+def get_knowledge():
+    conn = get_db_connection()
+    knowledge = conn.execute('SELECT * FROM knowledge_base').fetchall()
+    conn.close()
+    return knowledge
+
+def rename_chat(chat_id, title):
+    conn = get_db_connection()
+    conn.execute('UPDATE chats SET title = ? WHERE id = ?', (title, chat_id))
     conn.commit()
     conn.close()

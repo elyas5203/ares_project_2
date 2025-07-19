@@ -101,6 +101,22 @@
                 const li = document.createElement('li');
                 li.textContent = chat.title;
                 li.dataset.chatId = chat.id;
+
+                const renameButton = document.createElement('button');
+                renameButton.textContent = 'تغییر نام';
+                renameButton.addEventListener('click', async () => {
+                    const newTitle = prompt('نام جدید چت را وارد کنید:', chat.title);
+                    if (newTitle) {
+                        await fetch(`/chats/${chat.id}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ title: newTitle })
+                        });
+                        getChats();
+                    }
+                });
+
+                li.appendChild(renameButton);
                 li.addEventListener('click', () => {
                     currentChatId = chat.id;
                     getMessages(chat.id);
@@ -137,6 +153,11 @@
             if (!currentChatId) {
                 await createNewChat();
             }
+
+            const thinkingDiv = document.createElement('div');
+            thinkingDiv.classList.add('message', 'ai-message');
+            thinkingDiv.textContent = 'در حال فکر کردن...';
+            chatHistory.appendChild(thinkingDiv);
 
             const response = await fetch(`/chats/${currentChatId}/messages`, {
                 method: 'POST',
