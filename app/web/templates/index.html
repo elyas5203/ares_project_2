@@ -1,18 +1,71 @@
 <!DOCTYPE html>
-<html>
+<html lang="fa" dir="rtl">
 <head>
-    <title>AI Assistant</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دستیار هوش مصنوعی</title>
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #5a3e8d;
+            text-align: center;
+        }
+        form {
+            display: flex;
+            margin-top: 20px;
+        }
+        input[type="text"] {
+            flex-grow: 1;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+        input[type="submit"] {
+            background-color: #5a3e8d;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+            margin-right: 10px;
+        }
+        #response {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f0ebf9;
+            border-radius: 4px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v32.102/Vazirmatn-font-face.css">
 </head>
 <body>
-    <h1>AI Assistant</h1>
-    <form action="/chat" method="post">
-        <input type="text" name="prompt" size="50">
-        <input type="submit" value="Send">
-    </form>
-    <br>
-    <div>
-        <h2>Response:</h2>
-        <p id="response"></p>
+    <div class="container">
+        <h1>دستیار هوش مصنوعی</h1>
+        <form action="/chat" method="post">
+            <input type="text" name="prompt" placeholder="پیام خود را وارد کنید...">
+            <input type="submit" value="ارسال">
+        </form>
+        <br>
+        <div>
+            <h2>پاسخ:</h2>
+            <p id="response"></p>
+        </div>
     </div>
 
     <script>
