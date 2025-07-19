@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Assistant</title>
+</head>
+<body>
+    <h1>AI Assistant</h1>
+    <form action="/chat" method="post">
+        <input type="text" name="prompt" size="50">
+        <input type="submit" value="Send">
+    </form>
+    <br>
+    <div>
+        <h2>Response:</h2>
+        <p id="response"></p>
+    </div>
+
+    <script>
+        const form = document.querySelector('form');
+        const responseP = document.querySelector('#response');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const prompt = form.prompt.value;
+            const response = await fetch('/chat', {
+                method: 'POST',
+                body: new URLSearchParams({prompt})
+            });
+            const text = await response.text();
+            responseP.textContent = text;
+        });
+    </script>
+</body>
+</html>
