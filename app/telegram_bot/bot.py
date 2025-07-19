@@ -39,7 +39,7 @@ async def add_knowledge_command(update: Update, context: ContextTypes.DEFAULT_TY
 
 def main() -> None:
     """Start the bot."""
-    application = Application.builder().token(os.environ["TELEGRAM_BOT_TOKEN"]).build()
+    application = Application.builder().token(os.environ["TELEGRAM_BOT_TOKEN"]).job_queue(None).build()
 
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("post", post))

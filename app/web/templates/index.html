@@ -124,10 +124,20 @@
             fileInput.value = '';
             promptInput.style.height = 'auto';
 
-
             if (!currentChatId) {
                 await createNewChat();
             }
+
+            const userMessageDiv = document.createElement('div');
+            userMessageDiv.classList.add('mb-4');
+            const userRoleDiv = document.createElement('div');
+            userRoleDiv.classList.add('font-bold', 'text-blue-500');
+            userRoleDiv.textContent = 'شما';
+            const userContentDiv = document.createElement('div');
+            userContentDiv.textContent = prompt;
+            userMessageDiv.appendChild(userRoleDiv);
+            userMessageDiv.appendChild(userContentDiv);
+            chatHistory.appendChild(userMessageDiv);
 
             const thinkingDiv = document.createElement('div');
             thinkingDiv.classList.add('mb-4');
