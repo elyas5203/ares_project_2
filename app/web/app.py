@@ -1,8 +1,11 @@
 from flask import Flask, render_template, request, jsonify
+from dotenv import load_dotenv
 from app.core.ai import get_ai_response
 from app.core.db import get_chats, create_chat, get_messages, create_message, rename_chat
 
 app = Flask(__name__)
+
+load_dotenv()
 
 @app.route('/')
 def index():
@@ -23,9 +26,28 @@ def get_all_messages(chat_id):
     messages = get_messages(chat_id)
     return jsonify([dict(ix) for ix in messages])
 
+import os
+from werkzeug.utils import secure_filename
+
+UPLOAD_FOLDER = 'uploads'
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 @app.route('/chats/<int:chat_id>/messages', methods=['POST'])
 def add_message(chat_id):
-    prompt = request.json['prompt']
+    prompt = request.form['prompt']
+    file = request.files.get('file')
+
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        prompt += f"\n\nفایل ضمیمه شده: {filename}"
+
     create_message(chat_id, 'user', prompt)
 
     # Get message history for context
