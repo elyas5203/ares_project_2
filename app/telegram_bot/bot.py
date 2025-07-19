@@ -1,55 +1,49 @@
 import os
 import logging
-from telegram.ext import Updater, CommandHandler
-from app.core.db import add_competitor
+import asyncio
+from telegram import Update
+from telegram.ext import Application, CommandHandler, ContextTypes
+from app.core.db import add_competitor, add_knowledge
 
 # Enable logging
 logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
 )
-
 logger = logging.getLogger(__name__)
 
-# Define a few command handlers. These usually take the two arguments update and
-# context.
-def start(update, context):
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a message when the command /start is issued."""
-    update.message.reply_text('Hi!')
+    await update.message.reply_text("سلام! من دستیار هوش مصنوعی شما هستم.")
 
-def post(update, context):
+async def post(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Post a message to a specific chat."""
     chat_id = os.environ["TELEGRAM_CHAT_ID"]
     message = " ".join(context.args)
-    context.bot.send_message(chat_id=chat_id, text=message)
+    await context.bot.send_message(chat_id=chat_id, text=message)
 
-def add_competitor_command(update, context):
+async def add_competitor_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Add a competitor to the database."""
     name = context.args[0]
     url = context.args[1]
     add_competitor(name, url)
-    update.message.reply_text(f'Competitor {name} added.')
+    await update.message.reply_text(f"رقیب {name} با موفقیت اضافه شد.")
+
+async def add_knowledge_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Add information to the knowledge base."""
+    content = " ".join(context.args)
+    add_knowledge(content)
+    await update.message.reply_text("اطلاعات جدید با موفقیت به پایگاه دانش اضافه شد.")
 
 def main() -> None:
     """Start the bot."""
-    # Create the Updater and pass it your bot's token.
-    updater = Updater(os.environ["TELEGRAM_BOT_TOKEN"])
+    application = Application.builder().token(os.environ["TELEGRAM_BOT_TOKEN"]).build()
 
-    # Get the dispatcher to register handlers
-    dispatcher = updater.dispatcher
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("post", post))
+    application.add_handler(CommandHandler("add_competitor", add_competitor_command))
+    application.add_handler(CommandHandler("add_knowledge", add_knowledge_command))
 
-    # on different commands - answer in Telegram
-    dispatcher.add_handler(CommandHandler("start", start))
-    dispatcher.add_handler(CommandHandler("post", post))
-    dispatcher.add_handler(CommandHandler("add_competitor", add_competitor_command))
+    application.run_polling()
 
-    # Start the Bot
-    updater.start_polling()
-
-    # Run the bot until you press Ctrl-C or the process receives SIGINT,
-    # SIGTERM or SIGABRT. This should be used most of the time, since
-    # start_polling() is non-blocking and will stop the bot gracefully.
-    updater.idle()
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
