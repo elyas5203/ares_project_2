@@ -3,12 +3,12 @@ import logging
 import asyncio
 from dotenv import load_dotenv
 from telegram import Update
-import spacy
+from hazm import word_tokenize, Lemmatizer
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 from app.core.db import add_competitor, add_knowledge, create_chat, get_chat, create_message, get_messages, get_products
 from app.core.ai import get_ai_response
 
-nlp = spacy.load("fa_core_news_sm")
+lemmatizer = Lemmatizer()
 
 # Enable logging
 logging.basicConfig(
@@ -46,10 +46,11 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     telegram_chat_id = update.message.chat_id
     user_message = update.message.text
 
-    doc = nlp(user_message)
+    tokens = word_tokenize(user_message)
+    lemmas = [lemmatizer.lemmatize(token) for token in tokens]
 
     # Check for keywords
-    if any(token.lemma_ in ["محصول", "کالا"] for token in doc) and any(token.lemma_ in ["آخرین", "جدیدترین"] for token in doc):
+    if any(lemma in ["محصول", "کالا"] for lemma in lemmas) and any(lemma in ["آخرین", "جدیدترین"] for lemma in lemmas):
         products = get_products()
         if products:
             last_product = products[-1]
