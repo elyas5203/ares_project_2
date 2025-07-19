@@ -34,7 +34,7 @@ def analyze_competitor_route(competitor_id):
     competitor = get_competitor(competitor_id)
     if competitor:
         result = analyze_competitor_website(competitor['url'])
-        return result
+        return render_template('analysis_result.html', competitor=competitor, result=result)
     return "رقیب یافت نشد."
 
 @app.route('/products', methods=['GET', 'POST'])

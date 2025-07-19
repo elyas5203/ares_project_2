@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}نتیجه تحلیل رقیب{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl font-bold mb-4">نتیجه تحلیل رقیب: {{ competitor.name }}</h1>
+
+<div class="bg-white p-4 rounded-lg shadow-md">
+    <h2 class="text-lg font-semibold mb-4">آدرس وب‌سایت: <a href="{{ competitor.url }}" target="_blank" class="text-blue-500 hover:underline">{{ competitor.url }}</a></h2>
+    <div class="prose max-w-none">
+        {{ result|safe }}
+    </div>
+</div>
+{% endblock %}

@@ -26,7 +26,11 @@ def analyze_competitor_website(url):
         # Extract text
         text = soup.get_text()
 
-        # In the next step, I will use the AI to extract keywords and summarize the text
-        return f"تحلیل وب‌سایت {url} با موفقیت انجام شد. در مرحله بعد، خلاصه‌ای از محتوا و کلمات کلیدی به شما ارائه خواهد شد."
+        # Use the AI to extract keywords and summarize the text
+        prompt = f"لطفا متن زیر را که از وب‌سایت {url} استخراج شده است، تحلیل کن و یک خلاصه از محتوای اصلی، لیستی از کلمات کلیدی اصلی، و یک تحلیل کلی از نقاط قوت و ضعف محتوایی آن ارائه بده:\n\n{text}"
+
+        analysis = get_ai_response(prompt)
+
+        return analysis
     except Exception as e:
         return f"خطا در تحلیل وب‌سایت: {e}"
