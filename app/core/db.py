@@ -86,3 +86,15 @@ def get_products():
     products = conn.execute('SELECT * FROM products').fetchall()
     conn.close()
     return products
+
+def get_competitors():
+    conn = get_db_connection()
+    competitors = conn.execute('SELECT * FROM competitors').fetchall()
+    conn.close()
+    return competitors
+
+def get_competitor(competitor_id):
+    conn = get_db_connection()
+    competitor = conn.execute('SELECT * FROM competitors WHERE id = ?', (competitor_id,)).fetchone()
+    conn.close()
+    return competitor

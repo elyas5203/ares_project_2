@@ -3,9 +3,12 @@ import logging
 import asyncio
 from dotenv import load_dotenv
 from telegram import Update
+import spacy
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
-from app.core.db import add_competitor, add_knowledge, create_chat, get_chat, create_message, get_messages
+from app.core.db import add_competitor, add_knowledge, create_chat, get_chat, create_message, get_messages, get_products
 from app.core.ai import get_ai_response
+
+nlp = spacy.load("fa_core_news_sm")
 
 # Enable logging
 logging.basicConfig(
@@ -43,7 +46,19 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     telegram_chat_id = update.message.chat_id
     user_message = update.message.text
 
-    # Check if a chat session exists for this user, if not create one
+    doc = nlp(user_message)
+
+    # Check for keywords
+    if any(token.lemma_ in ["محصول", "کالا"] for token in doc) and any(token.lemma_ in ["آخرین", "جدیدترین"] for token in doc):
+        products = get_products()
+        if products:
+            last_product = products[-1]
+            await update.message.reply_text(f"آخرین محصول اضافه شده: {last_product['name']} - قیمت: {last_product['price']}")
+        else:
+            await update.message.reply_text("محصولی یافت نشد.")
+        return
+
+    # If no specific command is found, treat it as a normal chat message
     chat = get_chat(telegram_chat_id=telegram_chat_id)
     if not chat:
         chat = create_chat(f"Telegram Chat with {update.message.from_user.first_name}")

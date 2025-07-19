@@ -2,6 +2,8 @@ import requests
 import json
 from app.core.db import get_knowledge
 
+from bs4 import BeautifulSoup
+
 def get_ai_response(prompt):
     knowledge = get_knowledge()
     knowledge_base = "\n".join([f"- {k['content']}" for k in knowledge])
@@ -15,3 +17,16 @@ def get_ai_response(prompt):
     response = requests.post(url, json=data)
     response_data = response.json()
     return response_data["response"]
+
+def analyze_competitor_website(url):
+    try:
+        response = requests.get(url)
+        soup = BeautifulSoup(response.content, 'html.parser')
+
+        # Extract text
+        text = soup.get_text()
+
+        # In the next step, I will use the AI to extract keywords and summarize the text
+        return f"تحلیل وب‌سایت {url} با موفقیت انجام شد. در مرحله بعد، خلاصه‌ای از محتوا و کلمات کلیدی به شما ارائه خواهد شد."
+    except Exception as e:
+        return f"خطا در تحلیل وب‌سایت: {e}"

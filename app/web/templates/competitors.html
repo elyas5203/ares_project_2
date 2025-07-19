@@ -3,6 +3,52 @@
 {% block title %}تحلیل رقبا{% endblock %}
 
 {% block content %}
-<h1 class="text-2xl font-bold">تحلیل رقبا</h1>
-<p class="mt-4">در این بخش می‌توانید رقبای خود را تحلیل کنید.</p>
+<h1 class="text-2xl font-bold mb-4">تحلیل رقبا</h1>
+
+<div class="bg-white p-4 rounded-lg shadow-md">
+    <h2 class="text-lg font-semibold mb-4">افزودن رقیب جدید</h2>
+    <form action="{{ url_for('competitors') }}" method="post">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label for="name" class="block text-sm font-medium text-gray-700">نام رقیب</label>
+                <input type="text" name="name" id="name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+            </div>
+            <div>
+                <label for="url" class="block text-sm font-medium text-gray-700">آدرس وب‌سایت</label>
+                <input type="url" name="url" id="url" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+            </div>
+        </div>
+        <div class="mt-4">
+            <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                افزودن رقیب
+            </button>
+        </div>
+    </form>
+</div>
+
+<div class="mt-8 bg-white p-4 rounded-lg shadow-md">
+    <h2 class="text-lg font-semibold mb-4">لیست رقبا</h2>
+    <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+            <tr>
+                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">نام رقیب</th>
+                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">وب‌سایت</th>
+                <th scope="col" class="relative px-6 py-3">
+                    <span class="sr-only">Analyze</span>
+                </th>
+            </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+            {% for competitor in competitors %}
+            <tr>
+                <td class="px-6 py-4 whitespace-nowrap">{{ competitor.name }}</td>
+                <td class="px-6 py-4 whitespace-nowrap"><a href="{{ competitor.url }}" target="_blank" class="text-blue-500 hover:underline">{{ competitor.url }}</a></td>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <a href="{{ url_for('analyze_competitor_route', competitor_id=competitor.id) }}" class="text-indigo-600 hover:text-indigo-900">تحلیل</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}
